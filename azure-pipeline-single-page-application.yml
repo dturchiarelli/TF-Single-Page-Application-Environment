@@ -1,0 +1,39 @@
+# Single Page Application
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  publishPath: 'dist/single-page-app'
+  terraformPath: 'terraform'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '8.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install -g @angular/cli
+    npm install
+  displayName: 'npm install'
+
+- script: |
+    ng lint
+  displayName: 'ng lint'
+
+- script: |
+    ng build
+  displayName: 'ng build'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Website Artifacts'
+  inputs:
+    pathtoPublish: '$(publishPath)'
+    artifactName: drop
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Terraform'
+  inputs:
+    pathtoPublish: '$(terraformPath)'
+    artifactName: terraform
